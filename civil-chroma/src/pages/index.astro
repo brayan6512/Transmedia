@@ -1,0 +1,597 @@
+---
+// src/pages/index.astro
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Camille Pawlak - Digital Designer Portfolio"
+        />
+        <title>Camille Pawlak - Portfolio</title>
+        <style>
+            @font-face {
+                font-family: "Thebones";
+                src: url("/fonts/Thebones Demo.ttf") format("truetype");
+                font-weight: normal;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* Resto de estilos base */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: #111;
+                color: #fff;
+                overflow: hidden;
+            }
+
+            /* Actualizando los estilos del héroe para usar la nueva fuente */
+            .hero-title .name {
+                font-family: "Thebones", sans-serif;
+                font-size: clamp(3rem, 8vw, 6rem);
+                font-weight: 500;
+                line-height: 1;
+                transform: translateY(30px);
+                opacity: 0;
+                transition:
+                    transform 0.8s ease-out 0.2s,
+                    opacity 0.8s ease-out 0.2s;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: #111;
+                color: #fff;
+                overflow: hidden;
+            }
+
+            .container {
+                position: fixed;
+                width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: space-between;
+                padding: 1.5rem;
+                z-index: 100;
+                transition: opacity 0.5s ease;
+            }
+
+            .sections-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
+
+            .section {
+                position: absolute;
+                width: 100%;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                opacity: 0;
+                visibility: hidden;
+                transition:
+                    opacity 0.5s ease-in-out,
+                    visibility 0.5s ease-in-out;
+                padding-top: 5rem;
+            }
+
+            .section.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Hero Section Styles */
+            .hero {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 0;
+                text-align: center;
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            .number {
+                position: absolute;
+                top: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 1rem;
+                opacity: 0;
+                transition: opacity 0.8s ease-out;
+            }
+
+            .active .number {
+                opacity: 0.5;
+            }
+
+            .hero-title {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero-title .name {
+                font-size: clamp(3rem, 8vw, 6rem);
+                font-weight: 500;
+                line-height: 1;
+                transform: translateY(30px);
+                opacity: 0;
+                transition:
+                    transform 0.8s ease-out 0.2s,
+                    opacity 0.8s ease-out 0.2s;
+            }
+
+            .hero-title .role {
+                font-size: clamp(1rem, 2vw, 1.5rem);
+                opacity: 0;
+                transform: translateY(20px);
+                transition:
+                    transform 0.8s ease-out 0.4s,
+                    opacity 0.8s ease-out 0.4s;
+            }
+
+            .active .hero-title .name,
+            .active .hero-title .role {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            /* Circle Animation */
+            .circle-container {
+                position: absolute;
+                width: 400px;
+                height: 400px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+            }
+
+            .circle {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.03);
+            }
+
+            .arc {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 2px solid transparent;
+                border-top: 2px solid white;
+                animation: rotateLine 10s linear infinite;
+            }
+
+            /* Regular Section Styles */
+            .content-wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 5vw;
+                padding: 0 5vw;
+                margin-top: 2rem;
+                transform: scale(0.95);
+                opacity: 0;
+                transition:
+                    transform 0.8s ease-out,
+                    opacity 0.8s ease-out;
+            }
+
+            .active .content-wrapper {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            .circular-window {
+                width: min(40vw, 500px);
+                height: min(40vw, 500px);
+                border-radius: 50%;
+                overflow: hidden;
+            }
+
+            .window-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scale(1.1);
+                transition: transform 0.8s ease-out;
+            }
+
+            .active .window-image {
+                transform: scale(1);
+            }
+
+            .text-box {
+                background: white;
+                color: black;
+                padding: 2rem;
+                border-radius: 1rem;
+                width: min(40vw, 500px);
+                transform: translateX(20px);
+                opacity: 0;
+                transition:
+                    transform 0.5s ease-out 0.3s,
+                    opacity 0.5s ease-out 0.3s;
+            }
+
+            .active .text-box {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            .title {
+                font-size: clamp(2.5rem, 5vw, 4rem);
+                font-weight: bold;
+                margin-bottom: 2rem;
+                text-align: center;
+                transform: translateY(-20px);
+                opacity: 0;
+                transition:
+                    transform 0.5s ease-out,
+                    opacity 0.5s ease-out;
+            }
+
+            .active .title {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .metadata {
+                position: absolute;
+                bottom: 5vh;
+                display: flex;
+                gap: 2rem;
+                justify-content: center;
+                opacity: 0;
+                transform: translateY(20px);
+                transition:
+                    transform 0.5s ease-out 0.4s,
+                    opacity 0.5s ease-out 0.4s;
+            }
+
+            .active .metadata {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .year,
+            .role {
+                opacity: 0.7;
+            }
+
+            /* Navigation Elements */
+            .navigation-dots {
+                position: fixed;
+                right: 2rem;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                z-index: 20;
+            }
+
+            .dot {
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.3);
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .dot.active {
+                background-color: rgba(255, 255, 255, 1);
+            }
+
+            .social-links {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                display: flex;
+                gap: 2rem;
+                z-index: 20;
+            }
+
+            .social-link {
+                color: #fff;
+                text-decoration: none;
+                opacity: 0.5;
+                transition: opacity 0.2s;
+                font-size: 0.9rem;
+            }
+
+            .social-link:hover {
+                opacity: 1;
+            }
+
+            /* Animations */
+            @keyframes rotateLine {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Responsive Styles */
+            @media (max-width: 768px) {
+                .circle-container {
+                    width: 300px;
+                    height: 300px;
+                }
+
+                .content-wrapper {
+                    flex-direction: column;
+                    padding: 1rem;
+                }
+
+                .circular-window {
+                    width: min(80vw, 300px);
+                    height: min(80vw, 300px);
+                }
+
+                .text-box {
+                    width: 90vw;
+                }
+
+                .title {
+                    font-size: 2rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .metadata {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .social-links {
+                    right: 1rem;
+                    gap: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <nav>
+                <div class="logo">Brayan Criollo</div>
+            </nav>
+
+            <div class="sections-container">
+                <section class="section hero active" data-index="0">
+                    <div class="hero-content">
+
+                        <h1 class="hero-title">
+                            <span class="name">Querida <br>Fractura</span>
+                            
+                        </h1>
+                        <div class="circle-container">
+                            <div class="circle"></div>
+                            <div class="arc"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" data-index="1">
+                    <h2 class="title">Comic</h2>
+                    <div class="content-wrapper">
+                        <div class="circular-window">
+                            <img
+                                src="/pie.jpg"
+                                alt="Project preview"
+                                class="window-image"
+                            />
+                        </div>
+                        <div class="text-box">
+                            <p>
+                                A los 5 años, un niño vive una experiencia que marcará su infancia para siempre: un día mientras montaba en bicicleta con su hermana mayor por el barrio, el cordón de su zapato se enreda en la llanta. De un momento a otro, siente un dolor agudo en su pie; se lo fractura. Este accidente no solo le causa un dolor físico tremendo, sino que también lo obliga a perder el jardín. Durante su recuperación, el niño enfrenta una mezcla de sentimientos: la frustración de no poder salir a jugar con sus amigos, el miedo a lo que pueda pasar, y la soledad de ver la vida pasar desde la ventana de su casa.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="metadata">
+
+                    </div>
+                </section>
+                <section class="section" data-index="2">
+                    <h2 class="title">Cancion</h2>
+                    <div class="content-wrapper">
+                        <div class="circular-window">
+                            <img
+                                src="/cancion.png"
+                                alt="Project preview"
+                                class="window-image"
+                            />
+                        </div>
+                        <div class="text-box">
+                            <p>
+                                Canción que refleja los sentimientos de ese momento.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="metadata">
+
+                    </div>
+                </section>
+                <section class="section" data-index="3">
+                    <h2 class="title">Collage   </h2>
+                    <div class="content-wrapper">
+                        <div class="circular-window">
+                            <img
+                                src="/pie.jpg"
+                                alt="Project preview"
+                                class="window-image"
+                            />
+                        </div>
+                        <div class="text-box">
+                            <p>
+                                Creación de una exposición de fotografías o ilustraciones que representen momentos clave de la historia.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="metadata">
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="navigation-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+
+        </div>
+
+        <script>
+            interface ScrollState {
+                currentIndex: number;
+                isAnimating: boolean;
+                touchStartY: number;
+            }
+
+            class PortfolioScroller {
+                private state: ScrollState = {
+                    currentIndex: 0,
+                    isAnimating: false,
+                    touchStartY: 0,
+                };
+                private sections: HTMLElement[];
+                private dots: HTMLElement[];
+                private nav: HTMLElement | null;
+
+                constructor() {
+                    this.sections = Array.from(
+                        document.querySelectorAll<HTMLElement>(".section"),
+                    );
+                    this.dots = Array.from(
+                        document.querySelectorAll<HTMLElement>(".dot"),
+                    );
+                    this.nav = document.querySelector("nav");
+                    this.initializeEventListeners();
+                }
+
+                private updateSection(newIndex: number): void {
+                    if (
+                        this.state.isAnimating ||
+                        newIndex === this.state.currentIndex ||
+                        newIndex < 0 ||
+                        newIndex >= this.sections.length
+                    )
+                        return;
+
+                    this.state.isAnimating = true;
+
+                    // Update sections
+                    this.sections[this.state.currentIndex].classList.remove(
+                        "active",
+                    );
+                    this.sections[newIndex].classList.add("active");
+
+                    // Update navigation dots
+                    this.dots[this.state.currentIndex].classList.remove(
+                        "active",
+                    );
+                    this.dots[newIndex].classList.add("active");
+
+                    // Update navigation visibility
+                    if (this.nav) {
+                        this.nav.style.opacity = newIndex === 0 ? "0" : "1";
+                    }
+
+                    this.state.currentIndex = newIndex;
+
+                    setTimeout(() => {
+                        this.state.isAnimating = false;
+                    }, 800);
+                }
+
+                private initializeEventListeners(): void {
+                    // Wheel navigation
+                    window.addEventListener("wheel", (e) => {
+                        this.updateSection(
+                            this.state.currentIndex + (e.deltaY > 0 ? 1 : -1),
+                        );
+                    });
+
+                    // Touch navigation
+                    window.addEventListener("touchstart", (e) => {
+                        this.state.touchStartY = e.touches[0].clientY;
+                    });
+
+                    window.addEventListener("touchend", (e) => {
+                        const touchEndY = e.changedTouches[0].clientY;
+                        this.updateSection(
+                            this.state.currentIndex +
+                                (this.state.touchStartY > touchEndY ? 1 : -1),
+                        );
+                    });
+
+                    // Dot navigation
+                    this.dots.forEach((dot, index) => {
+                        dot.addEventListener("click", () =>
+                            this.updateSection(index),
+                        );
+                    });
+
+                    // Keyboard navigation
+                    window.addEventListener("keydown", (e) => {
+                        switch (e.key) {
+                            case "ArrowDown":
+                            case "ArrowRight":
+                                this.updateSection(this.state.currentIndex + 1);
+                                break;
+                            case "ArrowUp":
+                            case "ArrowLeft":
+                                this.updateSection(this.state.currentIndex - 1);
+                                break;
+                        }
+                    });
+                }
+            }
+
+            // Initialize the portfolio scroller when the DOM is loaded
+            document.addEventListener("DOMContentLoaded", () => {
+                new PortfolioScroller();
+            });
+        </script>
+    </body>
+</html>
